@@ -1,0 +1,34 @@
+{
+    "name": "evansmwendwa/directpay",
+    "type": "library",
+    "description": "PHP package to support directpay-online merchant transactions",
+    "keywords": ["credit", "card", "payments", "mpesa", "mobile", "money", "directpay", "directpayonline", "merchant"],
+    "license": "MIT",
+    "authors": [{
+            "name": "Evans Mwendwa",
+            "email": "evansmwendwa@users.noreply.github.com"
+        },
+        {
+            "name": "Ansel Melly",
+            "email": "anselmelly@users.noreply.github.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Evans\\Directpay\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Evans\\Directpay\\Test\\": "tests"
+        }
+    },
+    "require": {
+        "php": ">=5.3.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "6.*",
+        "phpunit/phpunit-selenium": "dev-master"
+    },
+    "minimum-stability": "dev"
+}
