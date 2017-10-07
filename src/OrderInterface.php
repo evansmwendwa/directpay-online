@@ -9,5 +9,5 @@ namespace Evans\Directpay;
  */
 interface OrderInterface
 {
-
+    public function getAmount();
 }
