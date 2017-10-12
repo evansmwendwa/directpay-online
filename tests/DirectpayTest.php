@@ -16,4 +16,8 @@ final class DirectpayTest extends TestCase
 
         $this->assertInstanceOf(Directpay::class, $class);
     }
+
+    public function testOrderinterface(): void {
+        
+    }
 }
