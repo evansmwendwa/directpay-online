@@ -34,4 +34,19 @@ class XMLHelper
 
         return $post_xml;
     }
+
+    public static function payWithCardXML(OrderInterface $order, $companyToken) {
+        $post_xml = '<?xml version="1.0" encoding="utf-8"?>
+                <API3G>
+                  <CompanyToken>' . $companyToken . '</CompanyToken>
+                  <Request>chargeTokenCreditCard</Request>
+                  <TransactionToken>' . $order->getTransactionToken() . '</TransactionToken>
+                  <CreditCardNumber>' . $order->getCreditCard() . '</CreditCardNumber>
+                  <CreditCardExpiry>' . $order->getCardExpiry()->format('my') . '</CreditCardExpiry>
+                  <CreditCardCVV>' . $order->getCvc() . '</CreditCardCVV>
+                  <CardHolderName>' . $order->getFirstname() .' '.$order->getLastname() . '</CardHolderName>
+                  <CardHolderID>'.bin2hex(openssl_random_pseudo_bytes(8)).'</CardHolderID>
+                </API3G>';
+        return $post_xml;
+    }
 }
