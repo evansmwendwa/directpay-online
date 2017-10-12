@@ -77,9 +77,7 @@ class Directpay
         if(false === $dpoResponse) {
             return $this->errorResponse($order);
         }
-
-        dump($dpoResponse);
-
+        
         return $this->preparedResponse($dpoResponse, $order);
     }
 
