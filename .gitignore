@@ -5,3 +5,4 @@ composer.phar
 package.tar
 /packages.json
 /.phpunit
+.DS_Store
