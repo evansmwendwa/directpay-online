@@ -26,9 +26,12 @@ class Client
         $response = false;
 
         if ($res->getStatusCode() === 200) {
-            //libxml_use_internal_errors(true);
             $xmlObject = simplexml_load_string((string)$res->getBody());
-            json_decode(json_encode($xmlObject));
+
+            if(false !== $xmlObject) {
+                $response =  json_decode(json_encode($xmlObject));
+            }
+
         }
 
         return $response;
@@ -40,9 +43,5 @@ class Client
         $xmlObject = simplexml_load_string($xmlResult);
 
         return json_decode(json_encode($xmlObject));
-    }
-
-    private function getCleanedResponse($dpoResponse) {
-
     }
 }

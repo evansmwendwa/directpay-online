@@ -42,9 +42,23 @@ class Directpay
     {
         $post_xml = XMLHelper::createTransactionXML($order, $this->companyToken);
 
-        //$response = Client::sendXMLRequest($this->endpoint, $post_xml);
+        //$dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
 
-        return Client::mockRequest($this->endpoint, $post_xml);
+        $dpoResponse = Client::mockRequest($this->endpoint, $post_xml);
+
+        if(false === $dpoResponse) {
+            return $this->errorResponse($order);
+        }
+
+        if(isset($dpoResponse->TransToken)) {
+            $order->setTransactionToken($dpoResponse->TransToken);
+        }
+
+        if(isset($dpoResponse->TransRef)) {
+            $order->setTransactionReference($dpoResponse->TransRef);
+        }
+
+        return $this->preparedResponse($dpoResponse, $order);
     }
 
     /**
@@ -81,5 +95,39 @@ class Directpay
     public function verifyPayment(OrderInterface $order)
     {
 
+    }
+
+    private function errorResponse($payload = []) {
+        return [
+            'status' => 'error',
+            'code' => 400,
+            'description' => 'Invalid merchant response',
+            'payload' => $payload
+        ];
+    }
+
+    private function preparedResponse($dpoResponse, $payload = []) {
+        $status = 'error';
+
+        if(isset($dpoResponse->Result) && $dpoResponse->Result === '000') {
+            $status = 'success';
+        }
+
+        $response = [
+            'status' => $status,
+            'code' => '',
+            'description' => '',
+            'payload' => $payload
+        ];
+
+        if(isset($dpoResponse->Result)) {
+            $response['code'] = $dpoResponse->Result;
+        }
+
+        if(isset($dpoResponse->ResultExplanation)) {
+            $response['description'] = $dpoResponse->ResultExplanation;
+        }
+
+        return $response;
     }
 }

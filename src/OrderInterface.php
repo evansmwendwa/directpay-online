@@ -30,4 +30,8 @@ interface OrderInterface
     public function getServiceType(): int;
 
     public function getPaymentDescription(): string;
+
+    public function setTransactionToken($token);
+
+    public function setTransactionReference($reference);
 }
