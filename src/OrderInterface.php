@@ -36,4 +36,10 @@ interface OrderInterface
     public function getTransactionToken();
 
     public function getTransactionReference();
+
+    public function getCreditCard();
+
+    public function getCvc();
+
+    public function getCardExpiry();
 }
