@@ -42,9 +42,7 @@ class Directpay
     {
         $post_xml = XMLHelper::createTransactionXML($order, $this->companyToken);
 
-        //$dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
-
-        $dpoResponse = Client::mockRequest($this->endpoint, $post_xml);
+        $dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
 
         if(false === $dpoResponse) {
             return $this->errorResponse($order);
@@ -77,7 +75,7 @@ class Directpay
         if(false === $dpoResponse) {
             return $this->errorResponse($order);
         }
-        
+
         return $this->preparedResponse($dpoResponse, $order);
     }
 
