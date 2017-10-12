@@ -2,6 +2,8 @@
 
 namespace Evans\Directpay;
 
+use \DateTimeInterface;
+
 /**
  * Order Interface
  *
@@ -9,5 +11,23 @@ namespace Evans\Directpay;
  */
 interface OrderInterface
 {
-    public function getAmount();
+    public function getAmount(): float;
+
+    public function getCurrency(): string;
+
+    public function getEmail(): string;
+
+    public function getFirstname(): string;
+
+    public function getLastname(): string;
+
+    public function getOrderNumber(): string;
+
+    public function getPhoneNumber(): string;
+
+    public function getOrderDate(): DateTimeInterface;
+
+    public function getServiceType(): int;
+
+    public function getPaymentDescription(): string;
 }
