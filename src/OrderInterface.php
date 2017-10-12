@@ -32,4 +32,8 @@ interface OrderInterface
     public function setTransactionToken($token);
 
     public function setTransactionReference($reference);
+
+    public function getTransactionToken();
+
+    public function getTransactionReference();
 }
