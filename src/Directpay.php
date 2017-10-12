@@ -4,6 +4,7 @@ namespace Evans\Directpay;
 
 use Evans\Directpay\OrderInterface;
 use Evans\Directpay\XMLHelper;
+use Evans\Directpay\Client;
 
 /**
  * Order Interface
@@ -12,18 +13,22 @@ use Evans\Directpay\XMLHelper;
  */
 class Directpay
 {
-    protected $apikey;
+    protected $companyToken;
+    protected $acceptableCurrencies;
 
     /**
      * Class Constructor
      *
      * @param string $apikey
+     * @param string $endpoint
      *
      * @return void
      */
-    public function __construct($apikey)
+    public function __construct($companyToken, $endpoint)
     {
-        $this->apikey = $apikey;
+        $this->companyToken = $companyToken;
+        $this->endpoint = $endpoint;
+        $this->acceptableCurrencies = ['USD','ZMW','TZS','KES','RWF','EUR','GBP','UGX'];
     }
 
     /**
@@ -35,7 +40,11 @@ class Directpay
      */
     public function createOrder(OrderInterface $order)
     {
+        $post_xml = XMLHelper::createTransactionXML($order, $this->companyToken);
 
+        //$response = Client::sendXMLRequest($this->endpoint, $post_xml);
+
+        return Client::mockRequest($this->endpoint, $post_xml);
     }
 
     /**
