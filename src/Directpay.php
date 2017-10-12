@@ -70,7 +70,17 @@ class Directpay
      */
     public function payWithCreditCard(OrderInterface $order)
     {
+        $post_xml = XMLHelper::payWithCardXML($order, $this->companyToken);
 
+        $dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
+
+        if(false === $dpoResponse) {
+            return $this->errorResponse($order);
+        }
+
+        dump($dpoResponse);
+
+        return $this->preparedResponse($dpoResponse, $order);
     }
 
     /**
