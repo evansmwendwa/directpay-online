@@ -40,6 +40,10 @@ class Directpay
      */
     public function createOrder(OrderInterface $order)
     {
+        if(!in_array($order->getCurrency(), $this->acceptableCurrencies)) {
+            throw new \Exception('Unsupported currency value');
+        }
+
         $post_xml = XMLHelper::createTransactionXML($order, $this->companyToken);
 
         $dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
