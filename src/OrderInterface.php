@@ -7,8 +7,8 @@ namespace Evans\Directpay;
  *
  * @author Evans Mwendwa
  */
-interface OrderInterface
-{
+interface OrderInterface {
+
     public function getAmount();
 
     public function getCurrency();
@@ -42,4 +42,6 @@ interface OrderInterface
     public function getCvc();
 
     public function getCardExpiry();
+
+    public function getPaymentMethod(); // card mpesa, airtel money vodafone
 }
