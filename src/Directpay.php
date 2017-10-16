@@ -7,28 +7,29 @@ use Evans\Directpay\XMLHelper;
 use Evans\Directpay\Client;
 
 /**
- * Order Interface
+ *  Directpay Class
  *
  * @author Evans Mwendwa
  */
-class Directpay
-{
+class Directpay {
+
     protected $companyToken;
     protected $acceptableCurrencies;
+    protected $acceptablePaymentMethods;
 
     /**
      * Class Constructor
      *
-     * @param string $apikey
+     * @param string $companyToken
      * @param string $endpoint
      *
      * @return void
      */
-    public function __construct($companyToken, $endpoint)
-    {
+    public function __construct($companyToken, $endpoint) {
         $this->companyToken = $companyToken;
         $this->endpoint = $endpoint;
-        $this->acceptableCurrencies = ['USD','ZMW','TZS','KES','RWF','EUR','GBP','UGX'];
+        $this->acceptableCurrencies = ['USD', 'ZMW', 'TZS', 'KES', 'RWF', 'EUR', 'GBP', 'UGX'];
+        $this->acceptablePaymentMethods = ['card', 'mpesa', 'airtel', 'mtn', 'tigo', 'vodacom'];
     }
 
     /**
@@ -48,19 +49,32 @@ class Directpay
 
         $dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
 
-        if(false === $dpoResponse) {
+        if (false === $dpoResponse) {
             return $this->errorResponse($order);
         }
 
-        if(isset($dpoResponse->TransToken)) {
+        if (isset($dpoResponse->TransToken)) {
             $order->setTransactionToken($dpoResponse->TransToken);
         }
 
-        if(isset($dpoResponse->TransRef)) {
+        if (isset($dpoResponse->TransRef)) {
             $order->setTransactionReference($dpoResponse->TransRef);
         }
 
         return $this->preparedResponse($dpoResponse, $order);
+    }
+
+    public function pay(OrderInterface $order) {
+        $payment_method = $order->getPaymentMethod();
+        if (!in_array($payment_method, $this->acceptablePaymentMethods)) {
+            throw new Exception('Unsuported Payment Method');
+        }
+
+        if ($payment_method === 'card') {
+            return $this->payWithCreditCard($order);
+        } else {
+            return $this->payWithMobileMoney($order);
+        }
     }
 
     /**
@@ -70,13 +84,12 @@ class Directpay
      *
      * @return void
      */
-    public function payWithCreditCard(OrderInterface $order)
-    {
+    protected function payWithCreditCard(OrderInterface $order) {
         $post_xml = XMLHelper::payWithCardXML($order, $this->companyToken);
 
         $dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
 
-        if(false === $dpoResponse) {
+        if (false === $dpoResponse) {
             return $this->errorResponse($order);
         }
 
@@ -90,9 +103,8 @@ class Directpay
      *
      * @return void
      */
-    public function payWithMobileMoney(OrderInterface $order)
-    {
-
+    protected function payWithMobileMoney(OrderInterface $order) {
+        
     }
 
     /**
@@ -102,9 +114,8 @@ class Directpay
      *
      * @return void
      */
-    public function verifyPayment(OrderInterface $order)
-    {
-
+    public function verifyPayment(OrderInterface $order) {
+        
     }
 
     private function errorResponse($payload = []) {
@@ -119,7 +130,7 @@ class Directpay
     private function preparedResponse($dpoResponse, $payload = []) {
         $status = 'error';
 
-        if(isset($dpoResponse->Result) && $dpoResponse->Result === '000') {
+        if (isset($dpoResponse->Result) && $dpoResponse->Result === '000') {
             $status = 'success';
         }
 
@@ -130,14 +141,15 @@ class Directpay
             'payload' => $payload
         ];
 
-        if(isset($dpoResponse->Result)) {
+        if (isset($dpoResponse->Result)) {
             $response['code'] = $dpoResponse->Result;
         }
 
-        if(isset($dpoResponse->ResultExplanation)) {
+        if (isset($dpoResponse->ResultExplanation)) {
             $response['description'] = $dpoResponse->ResultExplanation;
         }
 
         return $response;
     }
+
 }
