@@ -19,7 +19,7 @@ interface OrderInterface {
 
     public function getLastname();
 
-    public function getOrderNumber();
+    public function getInvoiceNumber();
 
     public function getPhoneNumber();
 
@@ -36,12 +36,4 @@ interface OrderInterface {
     public function getTransactionToken();
 
     public function getTransactionReference();
-
-    public function getCreditCard();
-
-    public function getCvc();
-
-    public function getCardExpiry();
-
-    public function getPaymentMethod(); // card mpesa, airtel money vodafone
 }
