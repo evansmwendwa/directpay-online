@@ -36,16 +36,16 @@ class XMLHelper {
         return $post_xml;
     }
 
-    public static function payWithCardXML(OrderInterface $order, $companyToken) {
+    public static function payWithCardXML(OrderInterface $params, $companyToken) {
         $post_xml = '<?xml version="1.0" encoding="utf-8"?>';
         $post_xml .= '<API3G>';
-        $post_xml .= '<CompanyToken>' . $companyToken . '</CompanyToken>';
+        $post_xml .= '<CompanyToken>' . $params['company_token'] . '</CompanyToken>';
         $post_xml .= '<Request>chargeTokenCreditCard</Request>';
-        $post_xml .= '<TransactionToken>' . $order->getTransactionToken() . '</TransactionToken>';
-        $post_xml .= '<CreditCardNumber>' . $order->getCreditCard() . '</CreditCardNumber>';
-        $post_xml .= '<CreditCardExpiry>' . $order->getCardExpiry()->format('my') . '</CreditCardExpiry>';
-        $post_xml .= '<CreditCardCVV>' . $order->getCvc() . '</CreditCardCVV>';
-        $post_xml .= '<CardHolderName>' . $order->getFirstname() . ' ' . $order->getLastname() . '</CardHolderName>';
+        $post_xml .= '<TransactionToken>' . $params['transaction_token'] . '</TransactionToken>';
+        $post_xml .= '<CreditCardNumber>' . $params['card_number'] . '</CreditCardNumber>';
+        $post_xml .= '<CreditCardExpiry>' . $params['card_expiry']->format('my') . '</CreditCardExpiry>';
+        $post_xml .= '<CreditCardCVV>' . $params['card_cvv'] . '</CreditCardCVV>';
+        $post_xml .= '<CardHolderName>' . $params['card_holders_name'] . '</CardHolderName>';
         $post_xml .= '<CardHolderID>' . bin2hex(openssl_random_pseudo_bytes(8)) . '</CardHolderID>';
         $post_xml .= '</API3G>';
 
