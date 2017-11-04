@@ -19,6 +19,7 @@ class XMLHelper {
         $post_xml .= '<PaymentAmount>' . $order->getAmount() . '</PaymentAmount>';
         $post_xml .= '<PaymentCurrency>' . $order->getCurrency() . '</PaymentCurrency>';
         $post_xml .= '<CompanyRefUnique>0</CompanyRefUnique>';
+        $post_xml .= '<CompanyRef>'. $order->getInvoiceNumber() .'</CompanyRef>';
         $post_xml .= '<customerFirstName>' . $order->getFirstname() . '</customerFirstName>';
         $post_xml .= '<customerEmail>' . $order->getEmail() . '</customerEmail>';
         $post_xml .= '<customerLastName>' . $order->getLastname() . '</customerLastName>';
@@ -57,6 +58,14 @@ class XMLHelper {
         $post_xml .= '<TransactionToken>' . (string) $order->getTransactionToken() . '</TransactionToken>';
         $post_xml .= '<PhoneNumber>' . (string) $order->getPhoneNumber() . '</PhoneNumber>';
         $post_xml .= '<PaymentName>' . (string) strtolower($order->getPaymentMethod()) . '</PaymentName>';
+        $post_xml .= $this->endXMLString();
+        return $post_xml;
+    }
+
+    public function verifyTransactionXML(OrderInterface $order, $companyToken) {
+        $post_xml = $this->beginXMLString($companyToken);
+        $post_xml .= '<Request>verifyToken</Request>';
+        $post_xml .= '<TransactionToken>' . $order->getTransactionToken() . '</TransactionToken>';
         $post_xml .= $this->endXMLString();
         return $post_xml;
     }
