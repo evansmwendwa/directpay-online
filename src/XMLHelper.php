@@ -52,32 +52,40 @@ class XMLHelper {
         return $post_xml;
     }
 
-    public function payWithMobile(OrderInterface $order, $companyToken) {
-        $post_xml = $this->beginXMLString($companyToken);
+    public static function payWithMobile(OrderInterface $order, $companyToken) {
+        $post_xml = self::beginXMLString($companyToken);
         $post_xml .= '<Request>ChargeTokenMobile</Request>';
         $post_xml .= '<TransactionToken>' . (string) $order->getTransactionToken() . '</TransactionToken>';
         $post_xml .= '<PhoneNumber>' . (string) $order->getPhoneNumber() . '</PhoneNumber>';
         $post_xml .= '<PaymentName>' . (string) strtolower($order->getPaymentMethod()) . '</PaymentName>';
-        $post_xml .= $this->endXMLString();
+        $post_xml .= self::endXMLString();
         return $post_xml;
     }
 
-    public function verifyTransactionXML(OrderInterface $order, $companyToken) {
-        $post_xml = $this->beginXMLString($companyToken);
+    public static function verifyTransactionXML(OrderInterface $order, $companyToken) {
+        $post_xml = self::beginXMLString($companyToken);
         $post_xml .= '<Request>verifyToken</Request>';
         $post_xml .= '<TransactionToken>' . $order->getTransactionToken() . '</TransactionToken>';
-        $post_xml .= $this->endXMLString();
+        $post_xml .= self::endXMLString();
         return $post_xml;
     }
 
-    protected function beginXMLString($companyToken = '') {
+    public static function getMobileOptionsXML(OrderInterface $order, $companyToken) {
+        $post_xml = self::beginXMLString($companyToken);
+        $post_xml .= '<Request>GetMobilePaymentOptions</Request>';
+        $post_xml .= '<TransactionToken>' . $order->getTransactionToken() . '</TransactionToken>';
+        $post_xml .= self::endXMLString();
+        return $post_xml;
+    }
+
+    protected static function beginXMLString($companyToken = '') {
         return '<?xml version="1.0" encoding="utf-8"?>'
                 . '<API3G>'
                 . '<CompanyToken>' . $companyToken . '</CompanyToken>';
     }
 
-    protected function endXMLString() {
-        return '<API3G>';
+    protected static function endXMLString() {
+        return '</API3G>';
     }
 
 }

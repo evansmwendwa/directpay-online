@@ -3,6 +3,7 @@
 namespace Evans\Directpay;
 
 use Evans\Directpay\OrderInterface;
+use Evans\Directpay\PayInterface;
 use Evans\Directpay\XMLHelper;
 use Evans\Directpay\Client;
 
@@ -64,16 +65,16 @@ class Directpay {
         return $this->preparedResponse($dpoResponse, $order);
     }
 
-    public function pay(OrderInterface $order) {
-        $payment_method = $order->getPaymentMethod();
+    public function pay(PayInterface $payment) {
+        $payment_method = $payment->getPaymentMethod();
         if (!in_array($payment_method, $this->acceptablePaymentMethods)) {
             throw new Exception('Unsuported Payment Method');
         }
 
         if ($payment_method === 'card') {
-            return $this->payWithCreditCard($order);
+            return $this->payWithCreditCard($payment);
         } else {
-            return $this->payWithMobileMoney($order);
+            return $this->payWithMobileMoney($payment);
         }
     }
 
@@ -84,8 +85,39 @@ class Directpay {
      *
      * @return void
      */
-    protected function payWithCreditCard(OrderInterface $order) {
-        $post_xml = XMLHelper::payWithCardXML($order, $this->companyToken);
+    protected function payWithCreditCard(PayInterface $payment) {
+        $post_xml = XMLHelper::payWithCardXML($payment, $this->companyToken);
+
+        $dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
+
+        if (false === $dpoResponse) {
+            return $this->errorResponse($payment);
+        }
+
+        return $this->preparedResponse($dpoResponse, $payment);
+    }
+
+    /**
+     * pay with mobile money
+     *
+     * @param Evans\Directpay\OrderInterface $Order
+     *
+     * @return void
+     */
+    protected function payWithMobileMoney(PayInterface $payment) {
+
+    }
+
+
+    /**
+     * get mobile payment options
+     *
+     * @param Evans\Directpay\OrderInterface $Order
+     *
+     * @return dpoResponse
+     */
+    public function getMobilePaymentOptions(OrderInterface $order) {
+        $post_xml = XMLHelper::getMobileOptionsXML($order, $this->companyToken);
 
         $dpoResponse = Client::sendXMLRequest($this->endpoint, $post_xml);
 
@@ -97,17 +129,6 @@ class Directpay {
     }
 
     /**
-     * pay with mobile money
-     *
-     * @param Evans\Directpay\OrderInterface $Order
-     *
-     * @return void
-     */
-    protected function payWithMobileMoney(OrderInterface $order) {
-        
-    }
-
-    /**
      * verifyPayment
      *
      * @param Evans\Directpay\OrderInterface $Order
@@ -115,7 +136,7 @@ class Directpay {
      * @return void
      */
     public function verifyPayment(OrderInterface $order) {
-        
+
     }
 
     private function errorResponse($payload = []) {
@@ -140,6 +161,17 @@ class Directpay {
             'description' => '',
             'payload' => $payload
         ];
+
+        // payment options object has different properties
+        if(isset($dpoResponse->paymentoptions)) {
+            $response['status'] = 'success';
+            $response['paymentoptions'] = [];
+
+            if(isset($dpoResponse->paymentoptions->mobileoption)
+                && is_array($dpoResponse->paymentoptions->mobileoption)) {
+                $response['paymentoptions'] = $dpoResponse->paymentoptions->mobileoption;
+            }
+        }
 
         if (isset($dpoResponse->Result)) {
             $response['code'] = $dpoResponse->Result;
