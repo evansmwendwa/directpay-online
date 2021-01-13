@@ -7,7 +7,7 @@ namespace Evans\Directpay;
  *
  * @author Evans Mwendwa
  */
-interface OrderInterface {
+interface PayInterface {
 
     public function getAmount();
 
